@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
 	print '\"./B10-223/B10-223_flair.nii.gz\"'
 	print ''
 	sys.exit()
-"""
+
 # infile = file('gzlist','r')
 
 # inlist = [line.split('\n')[0] for line in infile.readlines()]
@@ -34,19 +34,26 @@ if len(sys.argv) < 2:
 # 	os.system(cmd)
 # 	os.chdir(homedir)
 
-
+"""
 def unzip(zipfile):
-	cmd = 'gunzip ' + zipfile
-	print cmd
-	os.system(cmd)
-	return  zipfile.split('.gz')[-1]
+    """ unzips zipfile, 
+    returns unzipped filename"""
+	
+    cmd = 'gunzip ' + zipfile
+    print cmd
+    os.system(cmd)
+    return  zipfile.split('.gz')[-1]
 	
 
 
-def get_files(filelistFilename):
-	infile = file(filelistFilename,'r')
-
-	return [line.split('\n')[0] for line in infile.readlines()]
+def get_files(infile):
+    """parse list of files from a textfile"""
+    outlist = []
+    with open(infile) as fid:
+        for line in fid:
+            newf = line.replace('\"', '').strip('\n')
+            outlist.append(newf)
+    return outlist
 	
 
 
@@ -56,19 +63,16 @@ def reslice_image(imgPath):
 	os.system(cmd)
 	
 
-def main(cmdargs):
-	filelist = []
-	filelist += args.files
-	if len(args.files) == 0:
-		filelist += get_files(args.filelist)
-	filelist = set(filelist) #removes duplicates
-	currentDir = os.path.abspath('.')
-	print currentDir
-	for image in filelist:
-		image = image.strip('\"')
-		if '.gz' in image:
-			image = unzip(image)
-		reslice_image(image)
+def main(inputstuff):
+    if type(inputstuff) == str:
+        filelist = get_files(inputstuff)
+    else:
+        filelist = inputstuff
+    filelist = set(filelist) #removes duplicates
+    for image in filelist:
+        if '.gz' in image:
+            image = unzip(image)
+        reslice_image(image)
 	
 if __name__ == '__main__':
     ## TODO  need to figure out how filelist and files are mutually exclusive
@@ -87,8 +91,12 @@ if __name__ == '__main__':
     else:
         args = parser.parse_args()
         print args
+        if args.filelist:
+            main(args.filelist)
+        else:
+            main(args.files)
 
-        
+
 
 
 # python reslice.py file1.gz file2.gz ...
