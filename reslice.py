@@ -38,11 +38,12 @@ if len(sys.argv) < 2:
 def unzip(zipfile):
     """ unzips zipfile, 
     returns unzipped filename"""
-	
+    if not os.path.isfile(zipfile):
+        raise IOError('%s does not exist'%(zipfile))
     cmd = 'gunzip ' + zipfile
     print cmd
     os.system(cmd)
-    return  zipfile.split('.gz')[-1]
+    return  os.path.splitext(zipfile)[0]
 	
 
 
