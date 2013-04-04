@@ -56,18 +56,7 @@ def reslice_image(imgPath):
 	os.system(cmd)
 	
 
-parser = argparse.ArgumentParser(
-	description="""Takes a list of files (if no list is provided looks for a 
-list in the file gzlist) and, for each file, unzips it if needed and calls 
-'reslice <file> -zdim 45'""")
-parser.add_argument('files', nargs='*', help='the files to be processed')
-parser.add_argument('-l', '--filelist',
-		    help="""the file containing a list of files to be processed.
-Only read if there are no other files listed.""",
-		    default='gzlist')
-
 def main(cmdargs):
-	args = parser.parse_args(cmdargs)
 	filelist = []
 	filelist += args.files
 	if len(args.files) == 0:
@@ -82,7 +71,24 @@ def main(cmdargs):
 		reslice_image(image)
 	
 if __name__ == '__main__':
-	main(sys.argv[1:])
+    ## TODO  need to figure out how filelist and files are mutually exclusive
+    parser = argparse.ArgumentParser(
+        description="""Takes a list of files (if no list is provided 
+                        looks for a list in the file gzlist) and, 
+                        for each file, unzips it if needed and calls 
+                        'reslice <file> -zdim 45'""")
+    parser.add_argument('files', nargs='*', help='the files to be processed')
+    parser.add_argument('-l', '--filelist',
+                        help="""the file containing a list of files to be processed.
+                        Only read if there are no other files listed.""",
+                        default=None)
+    if len(sys.argv) == 1:
+        parser.print_help()
+    else:
+        args = parser.parse_args()
+        print args
+
+        
 
 
 # python reslice.py file1.gz file2.gz ...
