@@ -59,9 +59,10 @@ def get_files(infile):
 
 
 def reslice_image(imgPath):
-	cmd = 'resliceLattice ' + imgPath + ' -zdim 45'
-	print cmd
-	os.system(cmd)
+    """calls to the command line to reslice the image passed to it"""
+    cmd = 'resliceLattice ' + imgPath + ' -zdim 45'
+    print cmd
+    os.system(cmd)
 	
 
 def main(inputstuff):
@@ -76,17 +77,15 @@ def main(inputstuff):
         reslice_image(image)
 	
 if __name__ == '__main__':
-    ## TODO  need to figure out how filelist and files are mutually exclusive
     parser = argparse.ArgumentParser(
         description="""Takes a list of files (if no list is provided 
                         looks for a list in the file gzlist) and, 
                         for each file, unzips it if needed and calls 
                         'reslice <file> -zdim 45'""")
-    parser.add_argument('files', nargs='*', help='the files to be processed')
-    parser.add_argument('-l', '--filelist',
-                        help="""the file containing a list of files to be processed.
-                        Only read if there are no other files listed.""",
-                        default=None)
+    group = perser,add_mutually_exclusive_group()
+    group.add_argument('files', nargs='*', help='the files to be processed')
+    group.add_argument('-l', '--filelist',
+                        help="""the file containing a list of files to be processed.""", default='gzlist')
     if len(sys.argv) == 1:
         parser.print_help()
     else:
